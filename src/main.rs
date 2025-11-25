@@ -1,14 +1,15 @@
-mod db;
+mod db_config;
 
 use dotenvy::dotenv;
-use db::init_db;
+use mongodb::bson::DateTime;
+use uuid::Uuid;
+use crate::models::Movie;
+use crate::services::movie_service::create_movie;
 
 mod models;
+mod services;
 
 #[tokio::main]
 async fn main() {
-    dotenv().ok();
-    let db = init_db()
-        .await
-        .expect("Failed to initialize database");
+
 }
