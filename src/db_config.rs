@@ -1,6 +1,7 @@
 use std::env;
 use dotenvy::dotenv;
 
+#[derive(Clone)]
 pub struct DbConfig {
     pub mongo_uri: String,
     pub database_name: String,
