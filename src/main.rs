@@ -8,7 +8,7 @@ use crate::handlers::genre_handlers::genre_get;
 use crate::services::genre_service::GenreService;
 
 mod services;
-mod entities;
+mod models;
 mod common;
 mod handlers;
 

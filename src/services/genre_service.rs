@@ -3,7 +3,7 @@ use mongodb::{Collection, Database};
 use mongodb::bson::doc;
 use mongodb::error::Error;
 use uuid::Uuid;
-use crate::entities::genre::{Genre, GenreDTO};
+use crate::models::genre::{Genre, GenreDTO};
 
 #[derive(Clone)]
 pub struct GenreService {
