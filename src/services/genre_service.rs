@@ -36,18 +36,10 @@ impl GenreService {
         Ok(genres)
     }
 
-    pub async fn post_genres(&self, genre: Json<GenreDTO>) -> Result<GenreDTO, (StatusCode, String)> {
+    pub async fn post_genres(&self, genre_dto: Json<GenreDTO>) -> Result<GenreDTO, (StatusCode, String)> {
         let genre_collection = self.get_genres_collection();
-        let uuid = Binary::from_uuid_with_representation(MongoUuid::new(), UuidRepresentation::Standard);
-        let id = Some(Uuid::from_slice(&uuid.bytes).unwrap());
-        let genre_entity = Genre {
-            id: Some(uuid),
-            name: String::from(&genre.name),
-        };
-        let genre_dto = GenreDTO {
-            id,
-            name: String::from(&genre.name),
-        };
+        let genre_entity = genre_dto.to_genre();
+        let genre_dto = genre_entity.to_dto();
 
         genre_collection.insert_one(&genre_entity).await.map_err(Self::err)?;
         Ok(genre_dto)
