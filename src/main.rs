@@ -11,6 +11,7 @@ mod services;
 mod models;
 mod common;
 mod handlers;
+mod errors;
 
 #[derive(Clone)]
 pub struct AppState {

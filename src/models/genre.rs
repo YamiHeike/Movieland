@@ -1,7 +1,9 @@
 use serde::{Serialize, Deserialize };
 use mongodb::bson::Binary;
 use mongodb::bson::{uuid::{Uuid as MongoUuid, UuidRepresentation}};
+use mongodb::bson::spec::BinarySubtype;
 use uuid::Uuid;
+use crate::errors::GenreError;
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Genre {
@@ -21,11 +23,12 @@ impl Genre {
         Self { id, name }
     }
 
-    pub fn to_dto(&self) -> GenreDTO {
-        let id = self.id.as_ref()
-            .map(|bin_id| Uuid::from_slice(&bin_id.bytes).unwrap())
-            .unwrap_or_else(Uuid::new_v4);
-        GenreDTO::new(Some(id), String::from(&self.name))
+    pub fn to_dto(&self) -> Result<GenreDTO, GenreError> {
+        let id = match &self.id {
+            Some(bin_id) => Uuid::from_slice(&bin_id.bytes).map_err(|_| GenreError::InvalidId)?,
+            None => Uuid::new_v4()
+        };
+        Ok(GenreDTO::new(Some(id), String::from(&self.name)))
     }
 }
 
@@ -34,8 +37,15 @@ impl GenreDTO {
         Self { id, name }
     }
 
-    pub fn to_genre(&self) -> Genre {
-        let uuid = Binary::from_uuid_with_representation(MongoUuid::new(), UuidRepresentation::Standard);
-        Genre::new(Some(uuid), String::from(&self.name))
+    pub fn to_genre(&self) -> Result<Genre, GenreError> {
+        let uuid = match self.id {
+            Some(standard_uuid) => {
+                let mongo_uuid = MongoUuid::from_bytes(*standard_uuid.as_bytes());
+                Binary::from_uuid_with_representation(mongo_uuid, UuidRepresentation::Standard)
+            }
+            None => Binary::from_uuid_with_representation(MongoUuid::new(), UuidRepresentation::Standard),
+        };
+        Ok(Genre::new(Some(uuid), self.name.clone()))
     }
+
 }
