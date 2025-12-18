@@ -1,7 +1,5 @@
 use serde::{Serialize, Deserialize };
-use mongodb::bson::Binary;
-use mongodb::bson::{uuid::{Uuid as MongoUuid, UuidRepresentation}};
-use mongodb::bson::spec::BinarySubtype;
+use mongodb::bson::{Binary, uuid::{Uuid as MongoUuid, UuidRepresentation}};
 use uuid::Uuid;
 use crate::errors::GenreError;
 

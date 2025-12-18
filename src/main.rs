@@ -4,7 +4,7 @@ use axum::{serve, Router};
 use axum::routing::{get};
 use mongodb::Database;
 use crate::db_config::DbConfig;
-use crate::handlers::genre_handlers::{genre_get, genre_post};
+use crate::handlers::genre_handlers::{genre_get, genre_get_by_id, genre_patch, genre_post};
 use crate::services::genre_service::GenreService;
 
 mod services;
@@ -28,7 +28,6 @@ async fn main() {
 }
 
 fn create_app(db: Database) -> Router {
-
     let genre_service = GenreService::new(db.clone());
 
     let state = AppState {
@@ -36,7 +35,8 @@ fn create_app(db: Database) -> Router {
     };
 
     let app = Router::new()
-        .route("/genres", get(genre_get).post(genre_post))
+        .route("/genres", get(genre_get).post(genre_post).patch(genre_patch))
+        .route("/genres/{id}", get(genre_get_by_id))
         .with_state(state);
     app
 }
