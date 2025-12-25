@@ -1,4 +1,3 @@
-use std::ops::Deref;
 use axum::Json;
 use mongodb::{Collection, Database};
 use mongodb::bson::{doc, Binary, spec::BinarySubtype};

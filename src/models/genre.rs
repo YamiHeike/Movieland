@@ -39,9 +39,9 @@ impl GenreDTO {
         let uuid = match self.id {
             Some(standard_uuid) => {
                 let mongo_uuid = MongoUuid::from_bytes(*standard_uuid.as_bytes());
-                Binary::from_uuid_with_representation(mongo_uuid, UuidRepresentation::Standard)
+                Binary::from_uuid_with_representation(mongo_uuid, UuidRepresentation::JavaLegacy)
             }
-            None => Binary::from_uuid_with_representation(MongoUuid::new(), UuidRepresentation::Standard),
+            None => Binary::from_uuid_with_representation(MongoUuid::new(), UuidRepresentation::JavaLegacy),
         };
         Ok(Genre::new(Some(uuid), self.name.clone()))
     }
