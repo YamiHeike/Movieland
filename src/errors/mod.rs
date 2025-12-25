@@ -8,7 +8,8 @@ pub enum GenreError {
     NotFound,
     #[error("genre already exists")]
     Duplicate,
-    #[error("invalid genre id")]InvalidId,
+    #[error("invalid genre id")]
+    InvalidId,
     #[error("database error: {0}")]
     Database(#[from] mongodb::error::Error),
 }

@@ -47,7 +47,7 @@ impl GenreService {
         }
     }
 
-    pub async fn post_genres(&self, genre_dto: Json<GenreDTO>) -> Result<GenreDTO, GenreError> {
+    pub async fn post_genre(&self, genre_dto: Json<GenreDTO>) -> Result<GenreDTO, GenreError> {
         let genre_collection = self.get_genres_collection();
 
         if let Some(_) = self.get_genre_by_name(&genre_dto.name).await {
@@ -75,12 +75,28 @@ impl GenreService {
             }
         }
 
-        col.update_one(doc! { "_id": Binary {
+        let result = col.update_one(doc! { "_id": Binary {
             subtype: BinarySubtype::UuidOld,
             bytes: id.as_bytes().to_vec(),
         }}, doc! { "$set": { "name": &genre_dto.name }}).await?;
 
+        if result.matched_count == 0 {
+            return Err(GenreError::NotFound);
+        }
+
         Ok(GenreDTO::new(genre_dto.id, String::from(&genre_dto.name)))
+    }
+
+    pub async fn delete_genre(&self, id: Uuid) -> Result<(), GenreError> {
+        let col = self.get_genres_collection();
+        let result = col.delete_one(doc! { "_id": Binary {
+            subtype: BinarySubtype::UuidOld,
+            bytes: id.as_bytes().to_vec(),
+        }}).await?;
+        if result.deleted_count == 0 {
+            return Err(GenreError::NotFound);
+        }
+        Ok(())
     }
 
     async fn get_genre_by_name(&self, name: &String) -> Option<Genre> {
