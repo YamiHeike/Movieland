@@ -3,14 +3,14 @@ use mongodb::bson::{Binary, uuid::{Uuid as MongoUuid, UuidRepresentation}};
 use uuid::Uuid;
 use crate::errors::GenreError;
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
 pub struct Genre {
     #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
     pub id: Option<Binary>,
     pub name: String,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, PartialEq, Eq)]
 pub struct GenreDTO {
     pub id: Option<Uuid>,
     pub name: String
@@ -43,7 +43,7 @@ impl GenreDTO {
             }
             None => Binary::from_uuid_with_representation(MongoUuid::new(), UuidRepresentation::JavaLegacy),
         };
-        Ok(Genre::new(Some(uuid), self.name.clone()))
+        Ok(Genre::new(Some(uuid), String::from(&self.name)))
     }
 
 }
